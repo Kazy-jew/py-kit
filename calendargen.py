@@ -1,9 +1,6 @@
 from datetime import date, timedelta, datetime
 import os
 
-if not os.path.exists('./current_dl'):
-    os.mkdir('./current_dl')
-
 
 class Calendar:
     def __init__(self):
@@ -13,15 +10,18 @@ class Calendar:
     def set_year(self, year):
         self.year = year
 
+    # generate dates in format '20210316' into a list
     def date_range(self, start, end):
         delta = end - start
         date_lis = []
         for i in range(delta.days+1):
             date_lis.append(str(start+timedelta(days=i)))
-        with open('./current_dl/dl_date.txt', 'w') as f:
-            for _ in date_lis:
-                f.write('{}\n'.format(_))
-        date_lis = [_.replace('{}-'.format(self.year), '') for _ in date_lis]
+        # if not os.path.exists('./current_dl'):
+        #     os.mkdir('./current_dl')
+        # with open('./current_dl/dl_date.txt', 'w') as f:
+        #     for _ in date_lis:
+        #         f.write('{}\n'.format(_))
+        date_lis = [_.replace('-', '') for _ in date_lis]
         return date_lis
 
 
