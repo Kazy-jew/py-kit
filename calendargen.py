@@ -1,5 +1,5 @@
 from datetime import date, timedelta, datetime
-import os
+import calendar
 
 
 class Calendar:
@@ -26,22 +26,41 @@ class Calendar:
 
 
     def input_dates(self):
-        date_in = [x for x in input('please input a date range (format: month/date/date or month/date/month/date for cross-months): ').split('/')]
-        if len(date_in) == 3:
-            self.date_list = self.date_range(date(int('{}'.format(self.year)),
-                                                  int('{:>2}'.format(date_in[0])),
-                                                  int('{:>2}'.format(date_in[1]))),
-                                             date(int('{}'.format(self.year)),
-                                                  int('{:>2}'.format(date_in[0])),
-                                                  int('{:>2}'.format(date_in[2]))))
-        else:
-            self.date_list = self.date_range(date(int('{}'.format(self.year)),
-                                                  int('{:>2}'.format(date_in[0])),
-                                                  int('{:>2}'.format(date_in[1]))),
-                                             date(int('{}'.format(self.year)),
-                                                  int('{:>2}'.format(date_in[2])),
-                                                  int('{:>2}'.format(date_in[3]))))
-        # print(self.date_list)
+        while not self.date_list:
+            date_in = [x for x in input('please input a date range (format: month or month/date/date or month/date/month/date for cross-months): ').split('/')]
+            if len(date_in) == 1:
+                if int(date_in[0]) != 12:
+                    self.date_list = self.date_range(date(int('{}'.format(self.year)),
+                                                          int('{:>2}'.format(date_in[0])),
+                                                          int('{:>2}'.format(1))),
+                                                     date(int('{}'.format(self.year)),
+                                                          int('{:>2}'.format(date_in[0]))+1,
+                                                          int('{:>2}'.format(1))))
+                    self.date_list = self.date_list[:-1]
+                else:
+                    self.date_list = self.date_range(date(int('{}'.format(self.year)),
+                                                          int('{:>2}'.format(date_in[0])),
+                                                          int('{:>2}'.format(1))),
+                                                     date(int('{}'.format(self.year)),
+                                                          int('{:>2}'.format(date_in[0])),
+                                                          int('{:>2}'.format(31))))
+            elif len(date_in) == 3:
+                self.date_list = self.date_range(date(int('{}'.format(self.year)),
+                                                      int('{:>2}'.format(date_in[0])),
+                                                      int('{:>2}'.format(date_in[1]))),
+                                                 date(int('{}'.format(self.year)),
+                                                      int('{:>2}'.format(date_in[0])),
+                                                      int('{:>2}'.format(date_in[2]))))
+            elif len(date_in) == 4:
+                self.date_list = self.date_range(date(int('{}'.format(self.year)),
+                                                      int('{:>2}'.format(date_in[0])),
+                                                      int('{:>2}'.format(date_in[1]))),
+                                                 date(int('{}'.format(self.year)),
+                                                      int('{:>2}'.format(date_in[2])),
+                                                      int('{:>2}'.format(date_in[3]))))
+            else:
+                print("Invalid Form !")
+        print(self.date_list)
         return self.date_list
 
 
@@ -51,4 +70,5 @@ if __name__ == "__main__":
     # then = date(2021, 7, 15)
     # delta = nowdate - then
     # print(now, then, delta)
+    # print(calendar.calendar(2021))
     Calendar().input_dates()

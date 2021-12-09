@@ -34,20 +34,21 @@ def pixiv_daily():
         # default download interval for each day
         time.sleep(120)
         # check if download is complete every 20s after default interval
+        start = time.time()
         while not complete(driver):
+            end = time.time()
             time.sleep(20)
-            # skip current date if not complete in 10min
-            skip += 20
-            # refresh the page every 200 seconds. sometimes useful if download stuck
-            if skip % 200 == 0:
+            # refresh the page circa every 200 seconds. sometimes useful if download stuck
+            if  3 <(start-end) % 197 < 5:
                 driver.refresh()
             # skip current date if download time exceeds 10 minutes
-            if skip > 600:
+            if start-end > 600:
                 print("date {} not finished".format(_))
                 broken.append(_)
                 break
-    with open('broken.txt', 'w') as f:
-        for _ in broken: f.write('{}\n'.format(_))
+    if broken :
+        with open('broken.txt', 'w') as f:
+            for _ in broken: f.write('{}\n'.format(_))
 
 
 
@@ -61,12 +62,14 @@ def daily_gen():
 def complete(driver):
     try:
         case1 = driver.find_elements(By.XPATH, '//*[@id="logWrap"]')
-        # case2 = driver.find_element_by_xpath('/html/body/div[1]/span[5]')
-        print(case1[0].text)
-        if "download complete" in case1[0].text.lower():
-            return "Complete"
-        else:
-            return False
+        if case1 :
+            if "download complete" in case1[0].text.lower():
+                print(case1[0].text)
+                return "Complete"
+            else:
+                return False
+        # sometimes there is no content in case1, generally the download is complete in such case
+        else: return True
     except NSe:
         return False
 
