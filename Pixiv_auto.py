@@ -5,7 +5,6 @@ import time
 import os
 from selenium.common.exceptions import NoSuchElementException as NSe
 
-
 def pixiv_daily():
     skip = 0
     broken = []
@@ -31,21 +30,24 @@ def pixiv_daily():
         dl_btn.click()
         crawl_debut = driver.find_element(By.XPATH, '/html/body/div[6]/div[4]/slot/form/div[1]/div/slot[1]/button[2]')
         crawl_debut.click()
+        page_start = time.time()
         # default download interval for each day
-        time.sleep(120)
-        # check if download is complete every 20s after default interval
+        time.sleep(100)
+        # check if download is complete every 13s after default interval
         start = time.time()
         while not complete(driver):
             end = time.time()
-            time.sleep(20)
-            # refresh the page circa every 200 seconds. sometimes useful if download stuck
-            if  3 <(start-end) % 197 < 5:
+            time.sleep(13)
+            # refresh the page circa every 200 seconds after default interval. sometimes useful if download stuck
+            if  7 <(start-end) % 97 < 11:
                 driver.refresh()
             # skip current date if download time exceeds 10 minutes
-            if start-end > 600:
+            if page_start-end > 600:
                 print("date {} not finished".format(_))
                 broken.append(_)
                 break
+        page_end = time.time()
+        print('Day {} used {.2f} s'.format(_[:4]+'/'+_[4:6]+'/'+_[6:], page_end-page_start))
     if broken :
         with open('broken.txt', 'w') as f:
             for _ in broken: f.write('{}\n'.format(_))
@@ -64,11 +66,11 @@ def complete(driver):
         case1 = driver.find_elements(By.XPATH, '//*[@id="logWrap"]')
         if case1 :
             if "download complete" in case1[0].text.lower():
-                print(case1[0].text)
+                print(case1[0].text.splitlines()[-3:])
                 return "Complete"
             else:
                 return False
-        # sometimes there is no content in case1, generally the download is complete in such case
+        # sometimes there is no element in case1, generally the download is complete in such case
         else: return True
     except NSe:
         return False
@@ -76,3 +78,5 @@ def complete(driver):
 
 if __name__ == '__main__':
     pixiv_daily()
+
+
