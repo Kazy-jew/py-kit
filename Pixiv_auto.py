@@ -8,17 +8,19 @@ from selenium.common.exceptions import NoSuchElementException as NSe
 
 def pixiv_daily():
     skip = 0
+    broken = []
     root = os.path.expanduser('~')
     chrome_data = r'AppData\Local\Google\Chrome\User Data'
     data_dir = os.path.join(root, chrome_data)
-    # change to your own proxy address
+    # change to your own proxy address, or set to None if not needed
     http_proxy = "127.0.0.1:7890"
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--proxy-server={}'.format(http_proxy))
-    # change to your own chrome profile path, you can find it under chrome://version/
+    # change to your own chrome profile path if is not installed with default configuration,
+    # you can find it in chrome browser under address chrome://version/
     chrome_options.add_argument("--user-data-dir={}".format(data_dir))
     # chrome_options.add_argument('--profile-directory=C:\\Users\\Administrator\\AppData\\Local\\Google\\Chrome\\User Data\\Default')
-    # chrome_options.add_extension("C:\\Users\\Administrator\\Desktop\\dkndmhgdcmjdmkdonmbgjpijejdcilfh.crx")
+    # keep browser open
     chrome_options.add_experimental_option("detach", True)
     dates = daily_gen()
     driver = webdriver.Chrome(options=chrome_options)
@@ -42,13 +44,17 @@ def pixiv_daily():
             # skip current date if download time exceeds 10 minutes
             if skip > 600:
                 print("date {} not finished".format(_))
+                broken.append(_)
                 break
+    with open('broken.txt', 'w') as f:
+        for _ in broken: f.write('{}\n'.format(_))
+
 
 
 def daily_gen():
     I = Calendar()
+    # you can change year here
     # I.year = 2021
-    # year = I.year
     dates = I.input_dates()
     return dates
 
@@ -59,6 +65,8 @@ def complete(driver):
         print(case1[0].text)
         if "download complete" in case1[0].text.lower():
             return "Complete"
+        else:
+            return False
     except NSe:
         return False
 
