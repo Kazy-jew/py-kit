@@ -4,9 +4,9 @@ from calendargen import Calendar
 import time
 import os
 from selenium.common.exceptions import NoSuchElementException as NSe
+from selenium.common.exceptions import ElementNotInteractableException as ENIe
 
 def pixiv_daily():
-    skip = 0
     broken = []
     root = os.path.expanduser('~')
     chrome_data = r'AppData\Local\Google\Chrome\User Data'
@@ -26,11 +26,19 @@ def pixiv_daily():
     for _ in dates:
         url = 'https://www.pixiv.net/ranking.php?mode=daily&date={}'.format(_)
         driver.get(url)
-        dl_btn = driver.find_element(By.XPATH, '//*[@id="openCenterPanelBtn"]')
-        dl_btn.click()
-        crawl_debut = driver.find_element(By.XPATH, '/html/body/div[6]/div[4]/slot/form/div[1]/div/slot[1]/button[2]')
-        crawl_debut.click()
         page_start = time.time()
+        try:
+            dl_btn = driver.find_element(By.XPATH, '//*[@id="openCenterPanelBtn"]')
+            dl_btn.click()
+            crawl_debut = driver.find_element(By.XPATH, '/html/body/div[6]/div[4]/slot/form/div[1]/div/slot[1]/button[2]')
+            crawl_debut.click()
+        # if browser unexpectedly shut down, PixivBatchDownloader extension will automatically resume the progress
+        except ENIe:
+            while not complete(driver):
+                time.sleep(13)
+            page_end = time.time()
+            print('Day {} used {:.2f} s'.format(_[:4] + '/' + _[4:6] + '/' + _[6:], page_end - page_start))
+            continue
         # this is for resumed results
         time.sleep(30)
         if complete(driver):
@@ -79,6 +87,7 @@ def complete(driver):
         else: return True
     except NSe:
         return False
+
 
 
 if __name__ == '__main__':
