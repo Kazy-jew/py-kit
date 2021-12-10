@@ -31,6 +31,11 @@ def pixiv_daily():
         crawl_debut = driver.find_element(By.XPATH, '/html/body/div[6]/div[4]/slot/form/div[1]/div/slot[1]/button[2]')
         crawl_debut.click()
         page_start = time.time()
+        # this is for resumed results
+        time.sleep(30)
+        if complete(driver):
+            print('Day {}'.format(_[:4] + '/' + _[4:6] + '/' + _[6:]))
+            continue
         # default download interval for each day
         time.sleep(100)
         # check if download is complete every 13s after default interval
@@ -41,13 +46,13 @@ def pixiv_daily():
             # refresh the page circa every 200 seconds after default interval. sometimes useful if download stuck
             if  7 <(start-end) % 97 < 11:
                 driver.refresh()
-            # skip current date if download time exceeds 10 minutes
-            if page_start-end > 600:
+            # skip current date if download time exceeds 1000 seconds
+            if page_start-end > 1000:
                 print("date {} not finished".format(_))
                 broken.append(_)
                 break
         page_end = time.time()
-        print('Day {} used {.2f} s'.format(_[:4]+'/'+_[4:6]+'/'+_[6:], page_end-page_start))
+        print('Day {} used {:.2f} s'.format(_[:4]+'/'+_[4:6]+'/'+_[6:], page_end-page_start))
     if broken :
         with open('broken.txt', 'w') as f:
             for _ in broken: f.write('{}\n'.format(_))
@@ -66,7 +71,7 @@ def complete(driver):
         case1 = driver.find_elements(By.XPATH, '//*[@id="logWrap"]')
         if case1 :
             if "download complete" in case1[0].text.lower():
-                print(case1[0].text.splitlines()[-3:])
+                print(' '.join(case1[0].text.splitlines()[-3:]))
                 return "Complete"
             else:
                 return False
@@ -78,5 +83,3 @@ def complete(driver):
 
 if __name__ == '__main__':
     pixiv_daily()
-
-
