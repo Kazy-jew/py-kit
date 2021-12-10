@@ -32,15 +32,16 @@ def pixiv_daily():
             dl_btn.click()
             crawl_debut = driver.find_element(By.XPATH, '/html/body/div[6]/div[4]/slot/form/div[1]/div/slot[1]/button[2]')
             crawl_debut.click()
-        # if browser unexpectedly shut down, PixivBatchDownloader extension will automatically resume the progress
+        # if browser unexpectedly been shut down, PixivBatchDownloader extension will automatically resume the progress,
+        # which will raise ENIe exception
         except ENIe:
             while not complete(driver):
                 time.sleep(13)
             page_end = time.time()
-            print('Day {} used {:.2f} s'.format(_[:4] + '/' + _[4:6] + '/' + _[6:], page_end - page_start))
+            print('Day {} used {:.2f}s'.format(_[:4] + '/' + _[4:6] + '/' + _[6:], page_end - page_start))
             continue
-        # this is for resumed results
-        time.sleep(30)
+        # presuming downloading a downloaded date, jump to next date faster
+        time.sleep(20)
         if complete(driver):
             print('Day {}'.format(_[:4] + '/' + _[4:6] + '/' + _[6:]))
             continue
