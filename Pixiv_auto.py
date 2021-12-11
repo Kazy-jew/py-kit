@@ -43,7 +43,7 @@ def pixiv_daily():
         # presuming downloading a downloaded date, jump to next date faster
         time.sleep(20)
         if complete(driver):
-            print('Day {}'.format(_[:4] + '/' + _[4:6] + '/' + _[6:]))
+            print('Day {} Resumed'.format(_[:4] + '/' + _[4:6] + '/' + _[6:]))
             continue
         # default download interval for each day
         time.sleep(100)
