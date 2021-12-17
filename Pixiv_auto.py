@@ -71,7 +71,7 @@ def pixiv_daily():
 def daily_gen():
     I = Calendar()
     # you can change year here
-    # I.year = 2021
+    I.year = 2020
     dates = I.input_dates()
     return dates
 
@@ -85,7 +85,8 @@ def complete(driver):
             else:
                 return False
         # sometimes there is no element in case1, generally the download is complete in such case
-        else: return True
+        else:
+            return True
     except NSe:
         return False
 
