@@ -6,6 +6,7 @@ import os
 from selenium.common.exceptions import NoSuchElementException as NSe
 from selenium.common.exceptions import ElementNotInteractableException as ENIe
 
+
 def pixiv_daily():
     broken = []
     root = os.path.expanduser('~')
@@ -53,7 +54,7 @@ def pixiv_daily():
             end = time.time()
             time.sleep(13)
             # refresh the page circa every 200 seconds after default interval. sometimes useful if download stuck
-            if  7 <(start-end) % 97 < 11:
+            if 7 < (start-end) % 97 < 11:
                 driver.refresh()
             # skip current date if download time exceeds 1000 seconds
             if page_start-end > 1000:
@@ -64,8 +65,8 @@ def pixiv_daily():
         print('Day {} used {:.2f} s'.format(_[:4]+'/'+_[4:6]+'/'+_[6:], page_end-page_start))
     if broken :
         with open('broken.txt', 'w') as f:
-            for _ in broken: f.write('{}\n'.format(_))
-
+            for _ in broken:
+                f.write('{}\n'.format(_))
 
 
 def daily_gen():
@@ -75,10 +76,11 @@ def daily_gen():
     dates = I.input_dates()
     return dates
 
+
 def complete(driver):
     try:
         case1 = driver.find_elements(By.XPATH, '//*[@id="logWrap"]')
-        if case1 :
+        if case1:
             if "download complete" in case1[0].text.lower():
                 print(' '.join(case1[0].text.splitlines()[-3:]))
                 return "Complete"
@@ -89,7 +91,6 @@ def complete(driver):
             return True
     except NSe:
         return False
-
 
 
 if __name__ == '__main__':

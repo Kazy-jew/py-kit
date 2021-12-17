@@ -24,10 +24,10 @@ class Calendar:
         date_lis = [_.replace('-', '') for _ in date_lis]
         return date_lis
 
-
     def input_dates(self):
         while not self.date_list:
-            date_in = [x for x in input('please input a date range (format: month or month/date/date or month/date/month/date for cross-months): ').split('/')]
+            date_in = [x for x in input('please input a date range (format: month or \
+month/date/date or month/date/month/date for cross-months): ').split('/')]
             if len(date_in) == 1:
                 if int(date_in[0]) != 12:
                     self.date_list = self.date_range(date(int('{}'.format(self.year)),
